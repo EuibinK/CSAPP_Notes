@@ -244,7 +244,7 @@ linux> gcc -o hello hello.c
 
    - In Linux,
      	- topmost region = code, data common to all processes
-     	- lower region = code, data defined by user's process
+        	- lower region = code, data defined by user's process
 
  -  Virtual address space (bottom -> top)
 
@@ -300,4 +300,110 @@ linux> gcc -o hello hello.c
 
 ##### ¶1.9.1 Amdahl's Law
 
-#####  
+- effectiveness of improving the performance of one part of a system
+- when we speed up one part of a system, the effect on the overall system performance depends on both **how significant** this part was and **how much it sped up**
+
+Suppose,
+
+​			$T_{old}$ = time required to execute some application
+
+​			$\alpha$ = fraction occupied by some part of the system
+
+​			$k$ = performance improve factor
+
+Then,
+
+​			$T_{new}=(1-\alpha)T_{old}+(\alpha T_{old})/k$
+
+​					 $=T_{old}[(1-\alpha)+\alpha/k]$
+
+Hence,
+
+​					$S=\frac1{(1-\alpha)+a/k}$
+
+
+
+Special case exists when $k=\infin$ (sped up to the point at which it takes a negligible amount of time)
+
+​					$S_{\infin}=\frac1{(1-a)}$
+
+​	
+
+##### ¶1.9.2 Concurrency and Parallelism
+
+- ***Concurrency***: general concept of a system with multiple, simultaneous activities
+- ***Parallelism***: use of concurrency to make a system run faster
+
+
+
+1. ==**Thread-level Concurrency**==
+
+   - With threads, can have multiple control flows executing wihtin a single process
+
+   - ***<u>Uniprocessor system</u>***
+
+     - thread-level concurrency was ***'simulated'*** by having a single computer rapidly switch among its executing processes
+
+       1. multiple users can interact with a system at the same time
+
+       2. single user can engage in multiple tasks concurrently
+
+   - ***<u>Multiprocessor system</u>***
+
+     - system consisting of **multiple processors** under the control of a **single operating system** kernel
+     - **Multi-core processors** (e.g. Intel i7)
+       - chip has 4 CPU cores
+         - each has its own L1 and L2 caches
+           - 2x L1 caches - instruction, data
+         - share higher levels of cache & interface to main memory
+     - **Hyperthreading**
+       - *simulatneous multi-threading*
+       - allows a **single CPU to execute multiple flows** of control
+       - having multiple copies of some of the CPU hardware (program counters, register files), while having only single copies of other parts of the hardware
+       - decides which of its threads to execute **on a cycle-by-cycle basis**
+         - conventional processor requires ≈20,000 clock cycles to shift between threads
+         - takes better advantage of its processing resources
+       - e.g. Intel i7 processor can have each core executing two threads ==> 2 x 4 = 8 threads in parallel
+
+     - Multiprocessing can improve system performance by...
+       1. reducing the need to simulate concurrency when performing multiple tasks
+       2. running a single application program faster (but only if the program is expressed in terms of multiple threads that can effectively execute in parallel)
+
+
+
+2. **==Instruction-Level Parallelism==**
+   - modern processors can **execute multiple instructions** at one time
+     - 2-4 instructions per clock cycle (<--> early microprocessors required 3-10 clock cycles to execute a single instruction)
+     - can process ≈100 instructions at a time
+   - ***<u>Pipelining</u>***
+     - **actions** required to execute an instruction are **partitioned into different steps** and the processor **hardware** is organized as a **series of stages**, each perfroming one of these steps
+     - **stages can operate in parallel**
+       - on different parts of different instructions
+   - Processors sustaining execution rates faster than 1 instruction per cycle = ***superscalar processors***
+
+ 
+
+3. **==Single-Instruction, Multiple-Data (SIMD) Parallelism==**
+   - modern processors have special hardware that allows a **single instruction** to cause **multiple operations to be performed in parallel**
+     - e.g. Intel, AMD processors can add 8 pairs of single-precision floating-point numbers in parallel
+   - used to speed up applications that process image, sound, and video data
+
+
+
+##### ¶1.9.3 The Importance of Abstractions in Computer Systems
+
+- **<u>Program side</u>**
+  - **simple application program interface (API)**
+    - allows users to use the code without having to delve into its inner workings
+- **<u>Processor side</u>**
+  - ***instruction set architecture***
+    - provides an abstraction of the actual processor hardware
+    - a machine-code program behaves as if it were executed on a processor that performs one instruction at a time
+- **<u>Operating system side</u>**
+  1. **files** <- I/O devices
+  2. **virtual memory** <- program memory
+  3. **processes** <- running program
+  4. **==virtual machine==** <- entire computer
+
+
+
